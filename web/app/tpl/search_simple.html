@@ -1,0 +1,20 @@
+<form class="form-inline form-validation" role="form"  NAME="searchform1"     ng-submit="search()">
+    <div class="form-group">{{'search.attribut'| translate }}
+        <select name="attribut"  class="form-control"   ng-model="searchitem.attribut">
+
+            <option ng-repeat="f in listmodel.columns" ng-value="f.name" ng-if='$index != 0' >
+                {{f.sTitle}}
+            </option>
+        </select>        
+    </div>
+
+    <div class="form-group"><label class="sr-only" for="Value">Value</label>
+        <input type="text" class="form-control" name="searchvalue" placeholder="{{'search.value'| translate }}"  ng-model="searchitem.searchvalue">
+    </div>
+    <button class="btn btn-primary" type="submit" >
+        <i class="fa fa-search"  ng-show="!errorService.waiting">{{'search.mot'| translate }}</i>
+        <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+        <span ng-show="errorService.waiting">Loading...</span>
+    </button>
+
+</form>

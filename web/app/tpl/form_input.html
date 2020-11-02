@@ -1,0 +1,187 @@
+<span ng-switch on="field.type"> 
+
+    <span ng-switch-when="DATE">
+
+        <input    class="form-control"   type="date"  placeholder="{{field.placeholder}}"  
+                  ng-readonly="field.readonly" ng-change="onChangeField(field.onchange)"  ng-required="field.required"
+                  ng-model="tsoftitem[field.name]"   ng-model-options="{timezone:'UTC'}" />
+
+    </span>
+
+    <span ng-switch-when="TIME">
+        <input    class="form-control"   type="time"   placeholder="{{field.placeholder}}"
+                  ng-readonly="field.readonly" ng-change="onChangeField(field.onchange)"  ng-required="field.required"
+                  ng-model="tsoftitem[field.name]"  ng-model-options="{timezone:'UTC'}" />
+
+    </span>
+
+    <span ng-switch-when="TIMESTAMP">
+        <input    class="form-control"  ng-change="onChangeField(field.onchange)"  type="datetime-local"   placeholder="{{field.placeholder}}"
+                  ng-readonly="field.readonly"  ng-required="field.required"
+                  ng-model="tsoftitem[field.name]"  ng-model-options="{timezone:'UTC'}" />
+
+    </span>
+
+
+    <span ng-switch-when="DATE1">
+        <div class="input-group date">
+            <input type="text" class="form-control"  
+                   datepicker-popup="dd/MM/yyyy"  close-text="Close"
+                   datepicker-options="dateOptions"   is-open="opened[field.name]"
+                   ng-required="field.required"    ng-readonly="field.readonly"  
+                   ng-model="tsoftitem[field.name]"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="opendate($event, field.name)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </div>
+    </span>
+    <span ng-switch-when="TIMESTAMP1">
+        <div class="input-group date">
+            <input type="text" class="form-control"  
+                   datepicker-popup="dd/MM/yyyy HH:mm:ss"  close-text="Close"
+                   datepicker-options="dateOptions"   is-open="opened[field.name]"
+                   ng-required="field.required"    ng-readonly="field.readonly"  
+                   ng-model="tsoftitem[field.name]"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="opendate($event, field.name)">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </button>
+            </span>
+        </div>
+    </span>
+
+
+    <span ng-switch-when="CHECKBOX">
+        <div class="form-control">
+            <div class="checkbox-inline">
+                <label class="checkbox">
+                    <input type="checkbox"  ng-change="onChangeField(field.onchange)"  ng-disabled="field.readonly"  ng-model="tsoftitem[field.name]"  ng-required="field.required"> 
+                </label>
+            </div>
+
+        </div>
+    </span>
+
+
+    <span ng-switch-when="PHONE">
+        <div class="input-group">
+            <input class="form-control"   type="tel"   autocomplete="off"   id="{{field.name}}" 
+                   ng-readonly="field.readonly"  ng-required="field.required" placeholder="{{field.placeholder}}"
+                   ng-model="tsoftitem[field.name]" ng-pattern="/[6,2,3][6,5,7,9,2,3][0-9]{7}$/"
+                   />
+            <span class="input-group-addon">
+                <i class="fa fa-phone"></i>
+            </span>
+        </div>
+    </span>
+
+    <span ng-switch-when="NUMBER">
+        <input class="form-control"   type="number"   autocomplete="off"
+               ng-readonly="field.readonly"  ng-required="field.required"
+               ng-model="tsoftitem[field.name]"   ng-max="field.max"  ng-min="field.min"
+              ng-change="onChangeField(field.onchange)"  />
+    </span>
+
+
+
+
+
+    <span ng-switch-when="SELECT">
+        <ui-select ng-model="tsoftitem[field.name]" theme="bootstrap" ng-change="onChangeField(field.onchange)"  ng-disabled="field.readonly"  ng-required="field.required">
+            <ui-select-match placeholder="{{field.placeholder}}">{{$select.selected[field.flibelle]}}</ui-select-match>
+            <ui-select-choices repeat="item in formmodel.selectmodels[field.name] | filter: $select.search">
+                <div ng-bind-html="item[field.flibelle] | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </span>
+
+
+    <span ng-switch-when="SELECTENUM">
+        <select   ng-disabled="field.readonly"  ng-required="field.required"
+                  ng-model="tsoftitem[field.name]" 
+                  ng-options="value.code as value.libelle  for value in formmodel.selectmodels[field.name]"
+                  class="form-control"  ng-change="onChangeField(field.onchange)"
+                  >
+            <option>--</option>
+        </select>
+    </span>
+
+
+    <span ng-switch-when="TEXTAREA">
+        <textarea class="form-control" rows="3"  cols="30" 
+                  ng-readonly="field.readonly"  ng-required="field.required"
+                  ng-model="tsoftitem[field.name]" >
+        </textarea>
+    </span>
+
+    <span ng-switch-when="AUTOCOMPLETE">
+        <div class="input-group">
+            <ui-select ng-model="tsoftitem[field.name]"
+                       theme="bootstrap"
+                       ng-disabled="field.readonly"  ng-change="onChangeField(field.onchange)"
+                       reset-search-input="false"   >
+                <ui-select-match placeholder="{{field.placeholder}}">{{$select.selected[field.flibelle]}}</ui-select-match>
+                <ui-select-choices repeat="item in formmodel.selectmodels[field.name]  track by item.code"
+                                   refresh="getItems($select.search,field.categorie,field.name)"
+                                   >
+                    <div ng-bind-html="item[field.flibelle] | highlight: $select.search"></div>
+                </ui-select-choices>
+            </ui-select>
+            <span class="input-group-btn" >
+                <button   ng-click="openform('lg', field.categorie, tsoftitem[field.name].code)" 
+                        class="btn btn-default" type="button"  ng-hide="!tsoftitem[field.name].code">
+                    <span class="glyphicon glyphicon-new-window"></span>
+                </button>
+                <button ng-click="openform('lg', field.categorie, -1)"       ng-disabled="field.readonly" 
+                        class="btn btn-default" type="button"  ng-hide="tsoftitem[field.name].code">
+                    <span class="fa fa-plus fw"></span>
+                </button>
+            </span>
+        </div>
+    </span>
+
+
+    <span ng-switch-when="FILE">
+        <input ui-jq="filestyle" type="file" data-icon="false" data-classButton="btn btn-default" 
+               file-model="tsoftitem[field.name]"  ng-required="field.required"  
+               data-classInput="form-control inline v-middle input-s"  data-disabled="{{!(tsoftitem['code'])}}">
+
+    </span>
+   
+    
+    <!--You can add more custom widget types needed for your project
+    -->  
+    <span ng-switch-default>  
+        <div class="input-group">
+            <input  class="form-control"   type="{{field.type}}"  autocomplete="off"  
+                    ng-readonly="field.readonly"  ng-required="field.required" 
+                    ng-model="tsoftitem[field.name]"   ng-minlength="field.minlength"  
+                    ng-maxlength="field.maxlength"   ng-pattern="field.pattern" ng-change="onChangeField(field.onchange)"
+                    />
+            <span class="input-group-addon" >
+                <span ng-switch on="field.type">
+                    <span ng-switch-when="PASSWORD">
+                        <i class="fa fa-lock"></i>
+                    </span> 
+                    <span ng-switch-when="TEL">
+                        <i class="fa fa-phone"></i>
+                    </span> 
+                    <span ng-switch-when="EMAIL">
+                        <i class="fa fa-envelope"></i>
+                    </span> 
+                    <span ng-switch-when="URL">
+                        <i class="fa fa-globe"></i>
+                    </span> 
+                    <span ng-switch-default>
+
+                    </span>
+                </span> 
+
+            </span>
+        </div>
+    </span>  
+
+</span> 
+

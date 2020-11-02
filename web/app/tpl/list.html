@@ -1,0 +1,57 @@
+
+<div class="bg-light lter b-b wrapper-md">
+    <div class="btn-toolbar pull-right">
+
+        <div class=" btn-group pull-right ">
+            <button type="button" class="btn btn-default" ng-click=" $state.go('app.form.elt', {categorie: listmodel.categorie})"  tooltip="{{'form.add'| translate}}">
+                <i class="fa fa-plus"></i>  
+            </button>
+            <button type="button" class="btn btn-default"  ng-click="alerte()"   >
+                <i class="fa fa-refresh"></i> 
+            </button>
+        </div>
+
+        <div class="btn-group dropdown pull-right" dropdown>
+            <button class="btn btn-default" dropdown-toggle ng-disabled="!listmodel.services.length">Action <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li  ng-repeat="s in listmodel.services"><button  type="button"   class="btn  btn-link" ng-click="openformprocess('lg', s)" >{{s.libelle}}</button></li>
+            </ul>
+        </div>
+<!--        <div class="btn-group dropdown pull-right" dropdown>
+            <button class="btn btn-default" dropdown-toggle ng-disabled="!listmodel.services.length">Report <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li  ng-repeat="s in listmodel.services | filter:s.type==='REPORT'"><button  type="button"   class="btn  btn-link" ng-click="openformprocess('lg', s)" >{{s.libelle}}</button></li>
+            </ul>
+        </div>-->
+
+    </div>
+    <h1 class="m-n font-thin h3">{{listmodel.libelle}}</h1>
+    <small class="text-muted">{{'search.legend'| translate }}</small>
+</div>
+
+<div class="wrapper-md">
+
+
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span ng-if="listmodel.isSearchable && listmodel.categorie">
+                <ng-include src="'tpl/search_full.html'"/> 
+            </span>   
+            <span ng-if="!listmodel.isSearchable && listmodel.categorie">
+                <ng-include src="'tpl/search_simple.html'"/> 
+            </span> 
+        </div>
+        <div class="panel-body table-responsive">
+            <table datatable="" dt-options="dtOptions" 
+                   dt-column-defs="dtColumnDefs" 
+                   class="table table-striped table-bordered table-hover" 
+                   id="dataTables-example" width="100%">
+            </table>
+
+        </div>
+    </div>
+</div>
+
+

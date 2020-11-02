@@ -1,0 +1,174 @@
+
+<form name="form1" id="form1"   class="form-validation"
+      method="POST"     role="form"    ng-submit="save()"  novalidate="true"  ng-controller="NotesCtrl">
+    <div class="row" >
+        <div class="col-lg-12">
+            <div class="box  box-primary">
+
+
+                <!-- /.panel-heading -->
+                <div class="box-body  table-responsive" >
+                    <div class="row">
+                        <div class="col-sm-4">
+
+                            <div class="form-group"><label >Classe</label>
+                                <select     ng-change="loadmatiere()"    
+                                            ng-model="item.classe"
+                                            ng-options="value.code as value.libelle for value in item.classes"
+                                            class="form-control"
+                                            >
+                                    <option>
+                                        --
+                                    </option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label >Sequence</label>
+
+                                <select     
+                                    ng-model="item.numseq"    ng-change="getdata()" class="form-control"
+                                    >
+                                    <option>--</option>
+                                    <option value="1">Sequence 1</option>
+                                    <option value="2">Sequence 2</option>
+                                    <option value="3">Sequence 3</option>
+                                    <option value="4">Sequence 4</option>
+                                    <option value="5">Sequence 5</option>
+                                    <option value="6">Sequence 6</option>
+
+                                </select>
+
+
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-4">
+                            <label >Matiere</label >
+                            <select     ng-disabled="!item.classe || !item.numseq"  ng-change="getdata()"
+                                        ng-model="item.matiere"
+                                        ng-options=" value.code  as value.libelle for value in item.matieres"
+                                        class="form-control">
+                                <option>--</option>
+                            </select>
+
+                        </div>
+
+
+
+                    </div>
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example" width="100%"  ng-if="item.classe && item.numseq && item.matiere">
+                        <thead>
+                        <th >Matricule</th>
+                        <th >Nom Prenom</th>
+                        <th >Notes(/20)</th>
+                        </thead>
+                        <tbody>
+
+
+
+                            <tr  ng-repeat="n in listsObjects.notes">
+
+                                <td>{{n.matricule}} </td> 
+                                <td>{{n.nom_prenom}} </td> 
+                                <td>
+
+                                    <div class="form-group"  >
+                                        <ng-form name="subForm">
+                                            <input class="form-control"   type="number"   
+                                                   name="note"       required="true"    id="note"  
+                                                   min="0"  max="20"   ng-model="n.note"  ng-readonly="n.cycle_vie == 'VALIDE'"   />
+                                        </ng-form>
+                                    </div>
+
+                                </td> 
+                            </tr> 
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+                <div class="box-footer"    ng-show="item.classe && item.numseq && item.matiere">
+                    <button type="submit" class="btn btn-primary btn-block"   ng-disabled="form1.$invalid || form1.$pristine" >
+                        <i class="fa fa-check"  ng-show="!errorService.waiting">{{'form.save'| translate }}</i>
+                        <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+                        <span ng-show="errorService.waiting">Loading...</span>
+                    </button>
+
+
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+
+        <!-- /.col-lg-12 -->
+    </div>
+
+</form>
+
+
+<script type="text/javascript" >
+    app.controller("NotesCtrl",
+            function NotesCtrl($scope, $http, ErrorService,toaster) {
+
+                $scope.errorService = ErrorService;
+                $scope.item = {};
+                $scope.listsObjects = {};
+                $http.get('Classe/getAll')
+                        .success(function(data) {
+                            $scope.item.classes = data;
+                        });
+
+                $scope.loadmatiere = function() {
+                    $http.get('matiereclasse/' + $scope.item.classe)
+                            .success(function(data) {
+                                $scope.errorService.clear();
+                                $scope.item.numseq = null;
+                                $scope.item.matiere = null;
+                                $scope.item.matieres = data;
+                                $scope.form1.$setPristine();
+                            });
+                };
+
+                $scope.getdata = function() {
+                    if ($scope.item.matiere == null)
+                        return;
+                    $http.get('notes/data/' + $scope.item.classe + '/' + $scope.item.matiere + '/' + $scope.item.numseq)
+                            .success(function(data) {
+                                $scope.listsObjects.notes = data;
+                                $scope.form1.$setPristine();
+                            });
+                };
+
+
+                $scope.save = function() {
+                    $scope.errorService.setwaiting();
+                    $http.post('notes/data/' + $scope.item.classe + '/' + $scope.item.matiere + '/' + $scope.item.numseq, $scope.listsObjects)
+//                    $http({
+//                        method: 'POST',
+//                        url: 'notes/data/' + $scope.item.classe + '/' + $scope.item.matiere + '/' + $scope.item.numseq,
+//                        data: (JSON.stringify($scope.item.datas, ['codeeleveinscrit', 'code', 'codecoefficient', 'numerosequence', 'note'])), // pass in data as strings
+//                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}  // set the headers so angular passing info as form data (not request payload)
+//                    })
+                            .success(function(data) {
+                                toaster.pop("success", "Success", "Operation Effectuée avec Succès");
+                                $scope.errorService.setSucces();
+                            });
+
+                };
+
+
+
+            });
+
+
+</script>
+
+

@@ -1,0 +1,99 @@
+<div class="row"   ng-controller="ReportPaymentCtrl">
+    <div class="col-lg-12">
+        <div class="box  box-primary">
+
+            <div class="box-body  table-responsive" >
+                <div class="row">
+                    <div class="col-lg-6">  
+                        <div class="form-group"><label  class="control-label sr-only">Classe</label>
+                            <ui-select ng-model="item.classe" theme="bootstrap" ng-change="getdata()"  >
+                                <ui-select-match placeholder="Classe...">{{$select.selected.libelle}}</ui-select-match>
+                                <ui-select-choices repeat="item in item.classes | filter: $select.search">
+                                    <div ng-bind-html="item.libelle | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div    >
+
+                    <table  datatable="" class="table table-striped table-bordered table-hover" id="dataTables-example" width="100%"   dt-options="dtOptions" dt-columns="dtColumns">
+
+                    </table>
+                </div>
+
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+
+    <!-- /.col-lg-12 -->
+</div>
+
+
+
+
+<script type="text/javascript" >
+
+    app.controller("ReportPaymentCtrl",
+            function ReportPaymentCtrl($scope, $http, DTOptionsBuilder, DTColumnBuilder) {
+                $scope.item = {};
+                $http.get('Classe/getAll')
+                        .success(function(data) {
+                            $scope.item.classes = data;
+                        });
+
+                $scope.getdata = function() {
+                    $scope.dtOptions.sAjaxSource = 'payment/' + $scope.item.classe.code;
+                };
+
+
+                $scope.dtOptions = DTOptionsBuilder
+                        .fromSource('payment/0')
+                        .withPaginationType('full')
+                        .withBootstrap()
+                        // Add Table tools compatibility
+                        .withTableTools('vendor/jquery/datatables/copy_csv_xls.swf')
+                        .withTableToolsButtons([
+                            'copy',
+                            'print', {
+                                'sExtends': 'collection',
+                                'sButtonText': 'Save',
+                                'aButtons': ['csv', 'pdf']
+                            }
+                        ]);
+
+                $scope.dtColumns = [
+                    DTColumnBuilder.newColumn('matricule').withTitle('Matricule'),
+                    DTColumnBuilder.newColumn('nom_prenom').withTitle('Nom'),
+                    DTColumnBuilder.newColumn('cumulverse').withTitle('Cumul Versement'),
+                    DTColumnBuilder.newColumn('inscription').withTitle('Inscription'),
+                    DTColumnBuilder.newColumn('resteinscription').withTitle('Reste'),
+                    DTColumnBuilder.newColumn('tranche1').withTitle('Tranche1'),
+                    DTColumnBuilder.newColumn('restetranche1').withTitle('Reste'),
+                    DTColumnBuilder.newColumn('tranche2').withTitle('Tranche2'),
+                    DTColumnBuilder.newColumn('restetranche2').withTitle('Reste'),
+                    DTColumnBuilder.newColumn('tranche3').withTitle('Tranche3'),
+                    DTColumnBuilder.newColumn('restetranche3').withTitle('Reste')
+
+
+                ];
+
+
+
+
+
+
+            })
+            ;
+
+
+
+</script>
+
+
+
+

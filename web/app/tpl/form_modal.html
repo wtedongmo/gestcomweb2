@@ -1,0 +1,46 @@
+<form      ng-submit="saveitem(true)"  novalidate="true"
+           name="form"   method="POST"    id="form"    class="form-validation"  >
+
+    <div class="modal-header">
+        <button type="button" class="btn btn-link pull-right"  ng-click="closemodal()" >
+            <i class="fa fa-remove"></i>  
+        </button>
+        <h3 class="modal-title"> {{tsoftitem.categorie}}</h3>
+        <small class="text-muted"  translate="form.legend">Fields marked with * are required</small>
+    </div>
+    <div class="modal-body" >
+        <fieldset ng-disabled="!formmodel.access">
+            <tabset justified="true"  type="pills" vertical="false" >
+
+                <tab    ng-repeat="tab in formmodel.tabset" active="$first">
+                    <tab-heading  >{{tab.nom}}</tab-heading>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-{{12 / tab.nbrepannels}}"  ng-repeat="field in tab.inputs"  >
+                            <div class="form-group"  >
+                                <label    class="control-label"  for="{{field.name}}"  >{{field.label}}
+                                    <span style="color:red" ng-hide="!field.required">*</span>
+                                </label> 
+                                <ng-include src="'tpl/form_input.html'" />
+                            </div>
+                        </div> 
+                    </div>
+                </tab>
+
+            </tabset>
+        </fieldset>
+    </div>
+    <div class="modal-footer">
+        <button    type="button" class="btn btn-default"  ng-click="closemodal()"  ng-disabled="!formmodel.access">{{'form.reset'| translate}}</button>
+        <button type="submit" class="btn btn-primary"    ng-disabled="form.$invalid || form.$pristine"    >
+            <i class="fa fa-save"  ng-show="!errorService.waiting">{{'form.save'| translate}}</i>
+            <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+            <span ng-show="errorService.waiting">Loading...</span>
+        </button>
+<!--        <button type="button"  ng-click="saveitem(false)" class="btn btn-primary"    ng-disabled="form.$invalid || form.$pristine"    >
+            <i class="fa fa-save"  ng-show="!errorService.waiting">{{'form.save'| translate}}</i>
+            <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+            <span ng-show="errorService.waiting">Loading...</span>
+        </button>-->
+    </div> 
+</form>

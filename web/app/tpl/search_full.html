@@ -1,0 +1,25 @@
+<form  class="m-b-md ng-pristine ng-valid"
+       METHOD="POST" name="formfull"  id="formfull"
+       ng-submit="searchfull()"  novalidate="true"
+       >
+    <div class="input-group">
+        <input type="text" placeholder="{{'search.value'| translate }}............"   
+               name="fulltext"    ng-model="searchitem1.fulltext"
+               id="fulltext"    class="form-control input-lg"   required/>
+        <span class="input-group-btn">
+            <button class="btn btn-lg btn-primary" type="submit"  ng-disabled="formfull.$invalid">
+                <i class="fa fa-search"  ng-show="!errorService.waiting">{{'search.mot'| translate }}</i>
+                <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+                <span ng-show="errorService.waiting">Loading...</span>
+            </button>
+        </span>
+    </div>
+</form>
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+onchangeview
+  errorservice.clear 
+
+Lors de lajout dans la liste des relations propose un formulaire avec le fils
+coe lajout d'un invite a un evt dans vocatus
+
+
+
+CRXF  lire le cours spring avec ajax

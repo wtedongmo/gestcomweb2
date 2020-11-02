@@ -1,0 +1,35 @@
+<!-- list -->
+<ul class="nav"  ng-controller="HomeController">
+
+    <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+        <span >Components</span>
+    </li>
+    
+    <li  ng-repeat="m in menus"  >
+        <a href class="auto">      
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="{{m.icon.code}}"></i>
+            <span>{{m.libelle}}</span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span>{{m.libelle}}</span>
+                </a>
+            </li>
+            <li ui-sref-active="active" ng-if="r.codeMenu.code==m.code"  ng-repeat="r in rubriques" >
+                <a ui-sref="app.table.list({categorie:r.reference})">
+                   <i class="{{r.icon.code}}"></i><span>{{r.libelle}}</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+
+
+
+</ul>
+<!-- / list -->

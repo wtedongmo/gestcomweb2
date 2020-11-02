@@ -1,0 +1,55 @@
+{
+    "login": {
+        "legend": "Entrez vos identifiants",
+        "username": "Login",
+        "password": "Mot de passe",
+        "login": "Connection",
+        "forget": "Mot de passe oublie?"
+    },
+    "search": {
+        "legend": "Recherche des Données",
+        "zonerecherche": "Zone de recherche",
+        "zonerecherche1": "Recherche avancée",
+        "attribut": "Attributs",
+        "operateur": "Operateur",
+        "mot": "Recherche",
+        "value": "Valeur recherchée",
+        "result": "Resultats recherche",
+        "criteres": "Clauses",
+        "criteresinit": "Init"
+    },
+    "form": {
+        "legend": "(Les champs suivis de * sont obligatoires)",
+        "edit": "Modifier",
+        "save": "Ok",
+        "save_close": "Ok & Fermer",
+        "reset": "Annuler",
+        "add": "Nouveau",
+        "del": "Supprimer",
+        "search": "Rechercher",
+        "refresh": "Rafraichir",
+        "listbegin": "Debut",
+        "listprevious": "Precedent",
+        "listnext": "Suivant",
+        "listend": "Fin",
+        "duplicate": "Duplicate"
+    },
+    "menu": {
+        "deconnexion": "Deconnexion",
+        "password": "Changer mot de passe",
+        "anglais": "Anglais",
+        "francais": "Francais"
+
+    },
+    "message": {
+        "formsucceed": "Operation executée avec succes",
+        "confirmmessage": "Etes vous sûr?",
+        "droit": "Vous n'avez pas le droit de modifier",
+        "browse": "Parcourir"
+
+    }
+
+
+
+
+}

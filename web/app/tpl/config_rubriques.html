@@ -1,0 +1,189 @@
+<span ng-controller="CRController" >
+    <tabset justified="true"  type="pills" vertical="false"  >
+        <tab    active="">
+            <tab-heading  >Formulaire</tab-heading>
+            <br>
+
+            <div class="row"  >
+                <div class="col-sm-9">
+                    <div class="form-group"  >
+                        <label    class="control-label sr-only" >
+                            Select Rubrique
+                        </label>
+                        <div class="input-group"  >
+                            <ui-select ng-model="item.rubrique" theme="bootstrap" ng-change="load()"  >
+                                <ui-select-match placeholder="Rubrique...">{{$select.selected.libelle}}</ui-select-match>
+                                <ui-select-choices repeat="item in item.rubriques | filter: $select.search">
+                                    <div ng-bind-html="item.libelle | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button"  ng-click="addTab()"  ng-disabled="!item.rubrique.code">
+                                    <i class="fa fa-plus"  > Nouvel onglet</i>
+                                </button>
+
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row"  >
+                <form ng-submit="saveform()"  novalidate="true"
+                      name="form"   method="POST"    id="form"    class="form-validation"  >
+                    <table class="table table-striped m-b-none" >
+                        <thead>
+                            <tr>
+                                <th>Nom onglet</th>
+                                <th> Liste Champs</th>
+                                <th>  Nbre Panels</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr  ng-repeat="t in formmodel.tabset">
+                        <ng-form name="subform">
+                            <td >
+                                <div class="form-group"  >
+
+                                    <input class="form-control"  type="text"  required="" ng-model="t.nom"/>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"  >
+
+                                    <ui-select multiple  ng-model="t.inputs" theme="bootstrap"  required="">
+                                        <ui-select-match placeholder="Select or search a field in the list...">{{$item.label}}</ui-select-match>
+                                        <ui-select-choices repeat="field in fields | filter: $select.search">
+                                            <div ng-bind-html="field.label | highlight: $select.search"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group"  >
+
+                                    <input class="form-control"  type="number" min="2"  max="4" required="" ng-model="t.nbrepannels"/>
+                                </div>
+                            </td>
+                            <td>
+
+                                <button class="btn btn-default btn-block" type="button"  ng-click="delTab($index)"  ng-disabled="">
+                                    <i class="fa fa-trash"  ></i>
+                                </button>
+
+
+                            </td>
+                        </ng-form> 
+                        </tr>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">
+
+                                    <button type="submit" class="btn btn-primary"    ng-disabled="form.$invalid || form.$pristine"    >
+                                        <i class="fa fa-check"  ng-show="!errorService.waiting">{{'form.save'| translate}}</i>
+                                        <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+                                        <span ng-show="errorService.waiting">Loading...</span>
+                                    </button>
+
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </form>
+            </div>
+
+        </tab>
+        <tab  disabled="!(item.rubrique.code)">
+            <tab-heading  >Grille</tab-heading>
+            <br>
+            <form ng-submit="savegrill()"  novalidate="true"class="form-validation" 
+                  name="formgrill"   method="POST"    id="formgrill"     >
+                <div class="row" >
+                    <div  class="col-sm-12">
+                        <div class="form-group"  >
+                            <label    class="control-label" >
+                                Liste Champs  à afficher dans la grille
+                            </label> 
+                            <ui-select multiple ng-model="item.dt" theme="bootstrap" required="">
+                                <ui-select-match placeholder="Select or search a field in the list...">{{$item.label}}</ui-select-match>
+                                <ui-select-choices repeat="field in  fields | filter: $select.search">
+                                    <div ng-bind-html="field.label | highlight: $select.search"></div>
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </div>
+                    <div  class="col-sm-12">
+                        <button type="submit" class="btn btn-primary"    ng-disabled="formgrill.$invalid || formgrill.$pristine"    >
+                            <i class="fa fa-check"  ng-show="!errorService.waiting">{{'form.save'| translate}}</i>
+                            <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+                            <span ng-show="errorService.waiting">Loading...</span>
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </tab>
+    </tabset>
+</span>
+
+
+<script type="text/javascript">
+    app.controller("CRController",
+            function CRController($scope, $http, $scope, toaster) {
+                $scope.item = {};
+                $scope.fields = [];
+                $scope.formmodel = {};
+                $scope.listmodel = {};
+                $http.get('Rubrique/getAll')
+                        .success(function(data) {
+                            $scope.item.rubriques = data;
+                        });
+
+                $scope.load = function() {
+                    $http.get($scope.item.rubrique.reference + '/formConfig')
+                            .success(function(data) {
+                                $scope.formmodel = data.fm;
+                                $scope.fields = data.fields;
+                                $scope.listmodel = data.lm;
+
+                            });
+                };
+
+                $scope.saveform = function() {
+                    $http({
+                        method: 'POST',
+                        url: $scope.item.rubrique.reference + '/formConfig',
+                        data: angular.toJson($scope.formmodel) // pass in data as strings
+                    })
+                            .then(function(response) {
+                                toaster.pop("success", "Success", "Configuration Effectuée avec Succès");
+                            }, function(x) {
+                                toaster.pop("error", "Error", x.data);
+                            });
+                };
+                $scope.savegrill = function() {
+                    $http({
+                        method: 'POST',
+                        url: $scope.item.rubrique.reference + '/grillConfig',
+                        data: angular.toJson($scope.listmodel) // pass in data as strings
+                    })
+                            .then(function(response) {
+                                toaster.pop("success", "Success", "Configuration Effectuée avec Succès");
+                            }, function(x) {
+                                toaster.pop("error", "Error", x.data);
+                            });
+                };
+
+                $scope.addTab = function() {
+                    $scope.formmodel.tabset.push({nom: $scope.item.newtab, inputs: {}});
+                };
+                $scope.delTab = function(index) {
+                    $scope.formmodel.tabset.splice(index, 1);
+                };
+
+            })
+            ;
+</script>

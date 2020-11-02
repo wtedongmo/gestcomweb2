@@ -1,0 +1,55 @@
+{
+    "login": {
+        "legend": "Enter yours credentials",
+        "username": "Username",
+        "password": "Password",
+        "login": "Log in",
+        "forget": "Forgot password?"
+    },
+    "search": {
+        "legend": "Search Form and DataTables",
+        "zonerecherche": "Search Area",
+        "zonerecherche1": "Advanced Search",
+        "attribut": "Fields",
+        "operateur": "Operator",
+        "mot": "Search",
+        "value": "Research value",
+        "result": "Research Results",
+        "criteres": "Clauses",
+        "criteresinit": "Init"
+    },
+    "form": {
+        "legend": "(Fields marked with * are required)",
+        "edit": "Edit",
+        "save": "Save",
+        "save_close": "Save & Close",
+        "reset": "Cancel",
+        "add": "New",
+        "del": "Delete",
+        "search": "Search",
+        "refresh": "Refresh",
+        "listbegin": "Begin",
+        "listprevious": "Previous",
+        "listnext": "Next",
+        "listend": "End",
+        "duplicate": "Duplicate"
+    },
+    "menu": {
+        "deconnexion": "Logout",
+        "password": "Change password",
+        "anglais": "English",
+        "francais": "French"
+
+    },
+    "message": {
+        "formsucceed": "The operation completed successfully",
+        "confirmmessage": "Are you sure?",
+        "droit": "You don't have right to edit",
+        "browse": "Browse"
+
+    }
+
+
+
+
+}

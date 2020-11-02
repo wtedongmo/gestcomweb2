@@ -1,0 +1,368 @@
+<div ng-controller="RDVCtrl">
+    <div class="wrapper-md bg-light b-b">
+        <button type="button" class="btn btn-default btn-addon pull-right m-t-n-xs" ui-toggle-class="show" target="#aside">
+            <i class="fa fa-bars"></i> List
+        </button>
+        <h1 class="m-n font-thin h3">Rendez Vous</h1>
+    </div>
+    <div class="hbox hbox-auto-xs hbox-auto-sm">
+        <div class="col wrapper-md">
+            <div class="clearfix m-b">
+                <button type="button" tooltip="Double click on calendar day to add appointment" class="btn btn-sm btn-primary btn-addon" ng-click="addEvent()">
+                    <i class="fa fa-plus"></i>Add
+                </button>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="today()">today</button>
+                    <div class="btn-group m-l-xs">
+                        <button class="btn btn-sm btn-default" ng-click="changeView('agendaDay')">Day</button>
+                        <button class="btn btn-sm btn-default" ng-click="changeView('agendaWeek')">Week</button>
+                        <button class="btn btn-sm btn-default" ng-click="changeView('month')">Month</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pos-rlt">
+                <div class="fc-overlay">
+                    <div class="panel bg-white b-a pos-rlt">
+                        <span class="arrow"></span>
+                        <div class="h4 font-thin m-b-sm">{{event.title}}</div>
+                        <div class="line b-b b-light"></div>
+                        <div><i class="icon-calendar text-muted m-r-xs"></i> {{event.start| date:'medium'}}</div>
+                        <div class="ng-hide" ng-show='event.end'><i class="icon-clock text-muted m-r-xs"></i> {{event.end| date:'medium'}}</div>
+                        <div class="ng-hide" ng-show='event.location'><i class="icon-pointer text-muted m-r-xs"></i> {{event.location}}</div>
+                        <div class="m-t-sm">{{event.info}}</div>
+                        <div class="m-t-sm">{{event.url}}</div>
+                    </div>
+                </div>
+                <div class="calendar" ng-model="eventSources" config="uiConfig.calendar" ui-calendar="uiConfig.calendar"></div>
+            </div>
+        </div>
+        <div class="col w-md w-auto-xs bg-light dk bg-auto b-l hide" id="aside">
+            <div class="wrapper">
+                <div ng-repeat="e in events" class="bg-white-only r r-2x m-b-xs wrapper-sm {{e.className[0]}}">          
+                    <input ng-model="e.title" class="form-control m-t-n-xs no-border no-padder no-bg">
+                    <a class="pull-right text-xs text-muted" ng-click="remove($index)"><i class="fa fa-trash-o"></i></a>
+                    <div class="text-xs text-muted">{{e.start| date:"MMM dd"}} - {{e.end| date:"MMM dd"}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    app.controller('RDVCtrl', ['$scope', '$modal', function ($scope, $modal) {
+
+            $scope.openform = function (size, categorie, date) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'tpl/salon/rdv_modal.html',
+                    controller: 'ModalformController',
+                    resolve: {
+                        formData: function ($stateParams, $http) {
+                            var datas = $http({method: 'GET', url: 'addRDV?date=' + date}).
+                                    success(function (data, status, headers, config) {
+                                        return data;
+                                    });
+                            return datas;
+                        },
+                        formModel: function ($stateParams, $http) {
+                            var datas = $http({method: 'GET', url: categorie + '/formmodel'}).
+                                    success(function (data, status, headers, config) {
+                                        return data;
+                                    });
+                            return datas;
+                        }
+                    },
+                    size: size
+                });
+
+                modalInstance.result.then(function () {
+                }, function () {
+                });
+            };
+
+            var date = new Date();
+            var d = date.getDate();
+            var m = date.getMonth();
+            var y = date.getFullYear();
+
+            /* event source that pulls from google.com */
+//            $scope.eventSource = {
+//                url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
+//                className: 'gcal-event', // an option!
+//                currentTimezone: 'America/Chicago' // an option!
+//            };
+
+            /* event source that contains custom events on the scope */
+            $scope.events = [
+                {title: 'Coiffure', start: new Date(y, m, 1), className: ['b-l b-2x b-info'], location: 'Salon', info: 'Client Tiomo Boris'},
+                {title: 'Pose Gel', start: new Date(y, m, 3), end: new Date(y, m, 4, 9, 30), allDay: false, className: ['b-l b-2x b-danger'], location: 'London', info: 'Client Arthur Tchipnang'},
+                {title: 'Barbe', start: new Date(y, m, 6, 16, 0), className: ['b-l b-2x b-info'], location: 'Salon', info: 'Client Wilfried'},
+                {title: 'Coiffure', start: new Date(y, m, 8, 15, 0), className: ['b-l b-2x b-info'], location: 'Salon', info: 'Client Ghislaine'},
+                {title: 'Coiffure', start: new Date(y, m, 9, 19, 30), end: new Date(y, m, 9, 20, 30), className: ['b-l b-2x b-success'], info: 'Client TOTO'},
+                {title: 'Barbe', start: new Date(y, m, d - 5), end: new Date(y, m, d - 2), className: ['bg-success bg'], location: 'Salon', info: 'Client Herve'},
+                {title: 'Coiffure', start: new Date(y, m, d - 1, 16, 0), className: ['b-l b-2x b-info'], location: 'Salon', info: 'Client Herman'},
+                {title: 'Coiffure', start: new Date(y, m, d + 1, 19, 0), end: new Date(y, m, d + 1, 22, 30), allDay: false, className: ['b-l b-2x b-primary'], location: 'Salon', info: 'Client Josiane'},
+                {title: 'Pose Gel', start: new Date(y, m, d + 4, 16, 0), alDay: false, className: ['b-l b-2x b-warning'], location: 'Salon', info: 'Client NKOLO'},
+                {title: 'Coiffure', start: new Date(y, m, 28), end: new Date(y, m, 29), url: 'http://google.com/', className: ['b-l b-2x b-primary']},
+                {title: 'Barbe', start: new Date(y, m + 1, 6, 18, 0), className: ['b-l b-2x b-info']}
+            ];
+
+            /* alert on dayClick */
+            $scope.precision = 400;
+            $scope.lastClickTime = 0;
+            $scope.alertOnEventClick = function (date, jsEvent, view) {
+                var time = new Date().getTime();
+                if (time - $scope.lastClickTime <= $scope.precision) {
+                    $scope.openform('lg', 'RendezVous', date);
+                    $scope.events.push({
+                        title: 'New RDV',
+                        start: date,
+                        className: ['b-l b-2x b-info']
+                    });
+                }
+                $scope.lastClickTime = time;
+            };
+            /* alert on Drop */
+            $scope.alertOnDrop = function (event, delta, revertFunc, jsEvent, ui, view) {
+                $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
+            };
+            /* alert on Resize */
+            $scope.alertOnResize = function (event, delta, revertFunc, jsEvent, ui, view) {
+                $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
+            };
+
+            $scope.overlay = $('.fc-overlay');
+            $scope.alertOnMouseOver = function (event, jsEvent, view) {
+                $scope.event = event;
+                $scope.overlay.removeClass('left right').find('.arrow').removeClass('left right top pull-up');
+                var wrap = $(jsEvent.target).closest('.fc-event');
+                var cal = wrap.closest('.calendar');
+                var left = wrap.offset().left - cal.offset().left;
+                var right = cal.width() - (wrap.offset().left - cal.offset().left + wrap.width());
+                if (right > $scope.overlay.width()) {
+                    $scope.overlay.addClass('left').find('.arrow').addClass('left pull-up')
+                } else if (left > $scope.overlay.width()) {
+                    $scope.overlay.addClass('right').find('.arrow').addClass('right pull-up');
+                } else {
+                    $scope.overlay.find('.arrow').addClass('top');
+                }
+                (wrap.find('.fc-overlay').length == 0) && wrap.append($scope.overlay);
+            }
+
+            /* config object */
+            $scope.uiConfig = {
+                calendar: {
+                    height: 450,
+                    editable: true,
+                    header: {
+                        left: 'prev',
+                        center: 'title',
+                        right: 'next'
+                    },
+                    dayClick: $scope.alertOnEventClick,
+                    eventDrop: $scope.alertOnDrop,
+                    eventResize: $scope.alertOnResize,
+                    eventMouseover: $scope.alertOnMouseOver
+                }
+            };
+
+            /* add custom event*/
+            $scope.addEvent = function () {
+                $scope.events.push({
+                    title: 'New RDV',
+                    start: new Date(y, m, d),
+                    className: ['b-l b-2x b-info']
+                });
+            };
+
+            /* remove event */
+            $scope.remove = function (index) {
+                $scope.events.splice(index, 1);
+            };
+
+            /* Change View */
+            $scope.changeView = function (view, calendar) {
+                $('.calendar').fullCalendar('changeView', view);
+            };
+
+            $scope.today = function (calendar) {
+                $('.calendar').fullCalendar('today');
+            };
+
+            /* event sources array*/
+            $scope.eventSources = [$scope.events];
+        }]);
+    /* EOF */
+
+
+    app.controller('ModalformController',
+            ['$modal', '$modalInstance', 'formData', 'formModel', '$state', '$scope', '$http', 'toaster', 'ErrorService',
+                function ModalformController($modal, $modalInstance, formData, formModel, $state, $scope, $http, toaster, ErrorService) {
+
+                    $scope.closemodal = function () {
+                        $modalInstance.dismiss('cancel');
+                    };
+
+                    $scope.master = {};
+                    $scope.errorService = ErrorService;
+                    $scope.errorService.clear();
+                    $scope.tsoftitem = formData.data;
+                    $scope.master = angular.copy(formData.data);
+
+                    $scope.formmodel = formModel.data;
+
+
+                    $scope.reset = function () {
+                        $scope.tsoftitem = angular.copy($scope.master);
+                        $scope.form.$setPristine();
+                    };
+
+                    $scope.del = function (row, code, nbrow) {
+                        var r = confirm("Confirm ?");
+                        if (r == true) {
+                            $http.get(formData.data.categorie + '/del/' + code + '?row=' + row)
+                                    .success(function (data) {
+                                        toaster.pop("success", "Success", "Suppression Effectuée avec Succès");
+                                        if (nbrow >= 2) {
+                                            $scope.gotoElement(0);
+                                        }
+                                        else {
+                                            $scope.gotoElement(-1);
+                                        }
+
+                                    }).error(function (data) {
+                                toaster.pop("error", "Error", data);
+                            });
+
+                        }
+
+                    };
+
+
+
+                    $scope.beforesave = function () {
+                        angular.forEach($scope.formmodel.joincolumns, function (item) {
+                            if ($scope.tsoftitem[item] !== null) {
+                                $scope.tsoftitem[item] = $scope.tsoftitem[item].code;
+                            }
+                        });
+                        $scope.errorService.setwaiting();
+                    };
+
+                    $scope.aftersave = function () {
+                        toaster.pop("success", "Success", "Operation Effectuée avec Succès");
+                        $scope.errorService.setSucces();
+                        $scope.form.$setPristine();
+                    };
+
+                    $scope.getElement = function (row) {
+                        $http.get(formData.data.categorie + '/getElement/' + row)
+                                .success(function (data) {
+                                    $scope.tsoftitem = data;
+                                    $scope.master = angular.copy(data);
+                                    $scope.form.$setPristine();
+                                });
+                    };
+
+                    $scope.save = function (saveclose) {
+                        $scope.beforesave();
+                        $http({
+                            method: 'POST',
+                            url: formData.data.categorie + '/save',
+                            data: $.param(($scope.tsoftitem)), // pass in data as strings
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'}  // set the headers so angular passing info as form data (not request payload)
+                        })
+                                .success(function (data) {
+                                    $scope.getElement(data.row);
+                                    $scope.aftersave();
+                                });
+                    };
+
+
+                    //autocompletion
+                    $scope.getItems = function (val, subcategorie, name) {
+                        if (val.length < 4)
+                            return;
+                        return $http.get(subcategorie + '/autocomplete', {
+                            params: {
+                                cval: val
+                            }
+                        }).then(function (res) {
+                            var items = [];
+                            angular.forEach(res.data, function (item) {
+                                items.push(item);
+                            });
+                            $scope.formmodel.selectmodels[name] = items;
+                            return items;
+                        });
+                    };
+
+
+                    //doubleselect
+                    $scope.select = function (fieldname, fieldvalue) {
+                        return $http.get(formData.data.categorie + '/doubleselect/' + fieldname + '/' + fieldvalue)
+                                .then(function (res) {
+                                    // $scope.tsoftitem[res.data.name] = null;
+                                    $scope.formmodel.selectmodels[res.data.name] = res.data.value;
+                                });
+                    };
+
+
+                    $scope.onChangeField = function (onchangeValue) {
+                        if (onchangeValue === false) {
+                            return;
+                        }
+                        angular.forEach($scope.formmodel.joincolumns, function (item) {
+                            if ($scope.tsoftitem[item] !== null) {
+                                $scope.tsoftitem[item] = $scope.tsoftitem[item].code;
+                            }
+                        });
+                        $http({
+                            method: 'POST',
+                            url: formData.data.categorie + '/onChange',
+                            data: $.param(($scope.tsoftitem)), // pass in data as strings
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'}  // set the headers so angular passing info as form data (not request payload)
+                        })
+                                .success(function (data) {
+                                    angular.forEach(data, function (value, key) {
+                                        $scope.tsoftitem[key] = value;
+                                    });
+
+                                });
+                    };
+                    $scope.openform = function (size, categorie, code) {
+                        var modalInstance = $modal.open({
+                            templateUrl: 'tpl/form_modal.html',
+                            controller: 'formController',
+                            resolve: {
+                                formData: function ($stateParams, $http) {
+                                    var datas = $http({method: 'GET', url: categorie + '/getElementByCode/' + code}).
+                                            success(function (data, status, headers, config) {
+                                                return data;
+                                            });
+                                    return datas;
+                                },
+                                formModel: function ($stateParams, $http) {
+                                    var datas = $http({method: 'GET', url: categorie + '/formmodel'}).
+                                            success(function (data, status, headers, config) {
+                                                return data;
+                                            });
+                                    return datas;
+                                }
+                            },
+                            size: size
+                        });
+
+                        modalInstance.result.then(function () {
+                            console.log('Modal Form   closed at: ' + new Date());
+                        }, function () {
+                            console.log('Modal Form dismissed at: ' + new Date());
+                        });
+                    };
+
+
+
+                }])
+            ;
+
+
+</script>

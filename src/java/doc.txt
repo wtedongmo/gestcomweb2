@@ -1,0 +1,31 @@
+This project is a full web application with the following technologies:
+
+SpringMVC: Spring MVC will handles the user requests
+SpringData: Spring Data will handle all database actions
+SpringSecurity: Spring Security will protect our code against malicious users
+Tiles Framework: Tiles help us with pages template
+Angular.js: A Javascript library that will help us with object binding
+Twitter Bootstrap: A CSS library that will help us with a good looking style
+JQuery: Combined with Twitter Bootstrap to give some animation to our HTML components
+
+
+
+
+
+insert into Person(code,nom,prenom) values (1,'admin','admin');
+insert into User(code,username,password,isenabled,iscredentialsNonExpired,isaccountNonLocked,isaccountNonExpired)  values (1,'admin','d033e22ae348aeb5660fc2140aec35850c4da997','1','1','1','1');
+insert into Profil(code,libelle) values (1,'Admin');
+insert into Userprofil(code_user,code_profil,isenabled)  values (1,1,'OUI');
+
+creation des rubriques et des operations
+
+
+
+insert into TypeMatiere(libelle) values ('MATIERES SCIENTIFIQUES');
+insert into TypeMatiere(libelle) values ('MATIERES LITTERAIRES');
+insert into TypeMatiere(libelle) values ('MATIERES FORMATIONS HUMAINES');
+insert into Matiere(libelle) select NOM from collegeweb.matiere;
+insert into Serie(libelle,montant_inscription,formule_pension,
+niveau,description)   select CODE_SPECIALITE,0,0,concat('NIVEAU',ID_NIVEAU),
+SPECIALITE from collegeweb.specialite;
+

@@ -1,0 +1,37 @@
+# Eclipse
+.classpath
+.project
+.settings/
+ 
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Netbeans
+build/
+dist/
+dist00/
+nbproject/
+
+lib/
+LibtoAdd/
+Reports/
+
+
+*.jar
+*.war
+*.zip
+*.rar
+ 
+# Mac
+.DS_Store
+ 
+# Maven
+log/
+target/
+*.versionsBackup
+
+# Project
+*.log
+*.log.json

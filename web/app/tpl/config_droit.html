@@ -1,0 +1,137 @@
+<script type="text/javascript" >
+app.controller("droitCtrl",
+        function droitCtrl($scope, $http, ErrorService, DTOptionsBuilder) {
+
+            $scope.errorService = ErrorService;
+            $scope.item = {};
+            $scope.selects = [{
+                    "code": "READ_WRITE",
+                    "libelle": "READ_WRITE"
+                }, {
+                    "code": "READ_ONLY",
+                    "libelle": "READ_ONLY"
+                }];
+            $http.get('Profil/getAll')
+                    .success(function(data) {
+                        $scope.profils = data;
+                    });
+
+            $scope.getdroits = function() {
+                $http.get('${pageContext.request.contextPath}/rest/droits/' + $scope.item.profil.key0)
+                        .success(function(data) {
+
+                            $scope.item.rubriques = data;
+                            $scope.item.length = data.length;
+                            $scope.errorService.clear();
+                            $scope.form1.$setPristine();
+                        });
+            };
+
+
+
+            $scope.save = function() {
+                $scope.errorService.setwaiting();
+                $http({
+                    method: 'POST',
+                    url: '${pageContext.request.contextPath}/rest/droits/' + $scope.item.profil.key0,
+                    data: $.param($scope.item), // pass in data as strings
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}  // set the headers so angular passing info as form data (not request payload)
+                })
+                        .success(function(data) {
+                            $scope.errorService.setSucces();
+                            $scope.getdroits();
+                        });
+
+            };
+        });
+</script>
+
+
+<div class="bg-light lter b-b wrapper-md">
+    <h1 class="m-n font-thin h3">Définitions des droits</h1>
+</div>
+<div class="wrapper-md"  ng-controller="droitCtrl">
+
+    <div class="row"  ng-show="app.settings.debugmode">
+
+
+        <div class="col-lg-12">
+            <pre>{{formmodel}}</pre>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="panel panel-info">
+                <div class="panel-body"  >
+                    <div class="row"  >
+                        <div class="col-sm-9">
+                            <div class="form-group"  >
+                                <label    class="control-label" >
+                                    Select Profl
+                                </label>
+                                <div class="input-group"  >
+                                    <ui-select ng-model="tsoftitem.profil" theme="bootstrap" ng-change="load()"  >
+                                        <ui-select-match placeholder="Select or search a item in the list...">{{$select.selected.libelle}}</ui-select-match>
+                                        <ui-select-choices repeat="item in rubriques | filter: $select.search">
+                                            <div ng-bind-html="item.libelle | highlight: $select.search"></div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button"  ng-click="addTab()"  ng-disabled="">
+                                            <i class="fa fa-plus"  > Nouvel onglet</i>
+                                        </button>
+
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row"  ng-show="tsoftitem.profil">
+                        <form ng-submit="saveform()"  novalidate="true"
+                              name="form"   method="POST"    id="form"    class="form-validation"  >
+                            <table class="table table-striped m-b-none" >
+                                <thead>
+                                    <tr>
+                                        <th>Nom onglet</th>
+                                        <th> Liste Champs</th>
+                                        <th>  Nbre Panels</th>
+                                        <th> </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr  ng-repeat="t in formmodel.tabset">
+                                <ng-form name="subform">
+
+                                </ng-form> 
+                                </tr>
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3">
+
+                                            <button type="submit" class="btn btn-primary"    ng-disabled="form.$invalid || form.$pristine"    >
+                                                <i class="fa fa-check"  ng-show="!errorService.waiting">{{'form.save'| translate}}</i>
+                                                <i class="fa fa-spinner faa-spin animated" ng-show="errorService.waiting"></i>
+                                                <span ng-show="errorService.waiting">Loading...</span>
+                                            </button>
+
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

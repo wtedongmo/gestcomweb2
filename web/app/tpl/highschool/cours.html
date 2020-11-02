@@ -1,0 +1,116 @@
+<form name="form1" id="form1"
+      role="form"    ng-submit="save()"   ng-controller="CoursCtrl"  class="form-validation">
+    <div class="row"   >
+        <div class="col-lg-12">
+            <div class="box  box-primary">
+                <!-- /.panel-heading -->
+                <div class="box-body  table-responsive"  >
+                    <div class="row">
+                        <div class="col-lg-6">  
+                            <div class="form-group"   >
+                                <ui-select ng-model="item.prof" theme="bootstrap" ng-change="getcours()"  >
+                                    <ui-select-match placeholder="Professeur...">{{$select.selected.nom_prenom}}</ui-select-match>
+                                    <ui-select-choices repeat="item in item.profs | filter: $select.search">
+                                        <div ng-bind-html="item.nom_prenom | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-striped table-bordered table-hover" id="dataTables-example" width="100%"  >
+                        <thead>
+
+                        <th >Classe</th>
+                        <th >Durée en heures </th>
+                        </thead>
+                        <tbody>
+                            <tr   ng-repeat="c in listsObjects.courss">
+
+                                <td>{{c.libelle}} </td>
+                                <td >
+                                    <div class="form-group">
+                                        <ng-form name="subform">
+                                            <input class="form-control"   type="number"   autocomplete="off"
+                                                   required="true" 
+                                                   min="0"  max="6"   ng-model="c.duree_heures"/>
+                                        </ng-form>
+                                    </div>
+                                </td> 
+                            </tr> 
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+                <div class="box-footer"   ng-show="item.prof">
+                    <button type="submit" class="btn btn-primary  btn-block"   ng-disabled="form1.$invalid || form1.$pristine"   ><i class="fa fa-check-circle"></i>{{'form.save'| translate }}</button>
+
+
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+
+        <!-- /.col-lg-12 -->
+    </div>
+    <div class="row"  ng-show="app.settings.debugmode">
+        <div class="col-lg-12">
+            <pre>{{item}}</pre>
+        </div>
+    </div>
+
+
+</form>
+
+
+
+<script type="text/javascript" >
+
+    app.controller("CoursCtrl",
+            function CoursCtrl($scope, $http, ErrorService,toaster) {
+
+                $scope.errorService = ErrorService;
+                $scope.item = {};
+                $scope.listsObjects = {};
+                $http.get('Professeur/getAll')
+                        .success(function(data) {
+                            $scope.item.profs = data;
+                        });
+
+                $scope.getcours = function() {
+                    $http.get('cours/' + $scope.item.prof.code)
+                            .success(function(data) {
+                                $scope.listsObjects.courss = data;
+                                $scope.form1.$setPristine();
+                                $scope.errorService.clear();
+                            });
+                };
+
+
+                $scope.save = function() {
+                    $scope.errorService.setwaiting();
+                    //alert(angular.toJson($scope.listsObjects));
+                    //alert(($scope.listsObjects));
+                    $http.post('cours/' + $scope.item.prof.code, $scope.listsObjects)
+//                    $http({
+//                        method: 'POST',
+//                        url: 'postcoefs/' + $scope.item.matiere.code,
+//                        data: angular.toJson($scope.listsObjects), // pass in data as strings
+//                        headers: {'Content-Type': 'application/x-www-form-urlencoded'}  // set the headers so angular passing info as form data (not request payload)
+//                    })
+                            .success(function(data) {
+                                toaster.pop("success", "Success", "Operation Effectuée avec Succès");
+                                $scope.errorService.setSucces();
+                                //  $scope.getcoefs();
+
+                            });
+
+                };
+
+
+            });
+</script>
+
+
